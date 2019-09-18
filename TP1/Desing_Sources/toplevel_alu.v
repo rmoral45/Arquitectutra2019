@@ -49,71 +49,71 @@ module toplevel_alu
     assign                                  o_led_dbg               = {led_first_operator, led_second_operator, led_opcode};
 
 //always for 1st operator and debug signal
-always @ (posedge i_clock)
-begin
-    
-    latch_first_operator        <= i_btnL;
+    always @ (posedge i_clock)
+    begin
+        
+        latch_first_operator        <= i_btnL;
 
-    if(reset)
-    begin
-        led_first_operator      <= 1'b0;
-        reg_first_operator      <= {NB_DATA_BUS{1'b0}};
+        if(reset)
+        begin
+            led_first_operator      <= 1'b0;
+            reg_first_operator      <= {NB_DATA_BUS{1'b0}};
+        end
+        else if(save_first_operator)
+        begin
+            led_first_operator      <= 1'b1;
+            reg_first_operator      <= i_switch;
+        end
+        else
+        begin
+            led_first_operator      <= led_first_operator;
+            reg_first_operator      <= reg_first_operator;
+        end
     end
-    else if(save_first_operator)
-    begin
-        led_first_operator      <= 1'b1;
-        reg_first_operator      <= i_switch;
-    end
-    else
-    begin
-        led_first_operator      <= led_first_operator;
-        reg_first_operator      <= reg_first_operator;
-    end
-end
 
-//always for 2nd operator
-always @(posedge i_clock) 
-begin
-
-    latch_second_operator       <= i_btnC;
-
-    if(reset)
+    //always for 2nd operator
+    always @(posedge i_clock) 
     begin
-        led_second_operator     <= 1'b0;
-        reg_second_operator     <= {NB_DATA_BUS{1'b0}};
-    end
-    else if(save_second_operator)
-    begin
-        led_second_operator     <= 1'b1;
-        reg_second_operator     <= i_switch;
-    end
-    else
-    begin
-        led_second_operator     <= led_second_operator;
-        reg_second_operator     <= reg_second_operator;  
-    end
-end
 
-//always for opcode
-always @(posedge i_clock)
-begin
+        latch_second_operator       <= i_btnC;
 
-    latch_opcode                <= i_btnR;
+        if(reset)
+        begin
+            led_second_operator     <= 1'b0;
+            reg_second_operator     <= {NB_DATA_BUS{1'b0}};
+        end
+        else if(save_second_operator)
+        begin
+            led_second_operator     <= 1'b1;
+            reg_second_operator     <= i_switch;
+        end
+        else
+        begin
+            led_second_operator     <= led_second_operator;
+            reg_second_operator     <= reg_second_operator;  
+        end
+    end
 
-    if(reset)
+    //always for opcode
+    always @(posedge i_clock)
     begin
-        led_opcode              <= 1'b0;
-        reg_opcode              <= {NB_OPCODE{1'b0}};
+
+        latch_opcode                <= i_btnR;
+
+        if(reset)
+        begin
+            led_opcode              <= 1'b0;
+            reg_opcode              <= {NB_OPCODE{1'b0}};
+        end
+        else if(save_opcode)
+        begin
+            led_opcode              <= 1'b1;
+            reg_opcode              <= i_switch [NB_OPCODE-1 : 0];
+        end
+        else
+            led_opcode              <= led_opcode;    
+            reg_opcode              <= reg_opcode;
     end
-    else if(save_opcode)
-    begin
-        led_opcode              <= 1'b1;
-        reg_opcode              <= i_switch [NB_OPCODE-1 : 0];
-    end
-    else
-        led_opcode              <= led_opcode;    
-        reg_opcode              <= reg_opcode;
-end
 
 alu#(
     .NB_DATA_BUS(NB_DATA_BUS),
