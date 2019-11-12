@@ -5,7 +5,7 @@ module uart_tx
     parameter                               NB_DATA             = 8,
     parameter                               NB_STOP             = 1,
     parameter                               BAUD_RATE           = 9600,
-    parameter                               SYS_CLOCK           = 100**6,
+    parameter                               SYS_CLOCK           = 100000000,
     parameter                               TICK_RATE           = SYS_CLOCK / (BAUD_RATE*16),
     parameter                               NB_TICK_COUNTER     = $clog2(TICK_RATE),
     parameter                               NB_DATA_COUNTER     = $clog2(NB_DATA)  
@@ -33,16 +33,18 @@ module uart_tx
     reg             [N_STATES-1 : 0]        state;
     reg             [N_STATES-1 : 0]        state_next;
     reg             [NB_TICK_COUNTER-1 : 0] tick_counter;
-    reg             [NB_TICK_COUNTER-1 : 0] tick_counter_next;
+    reg                                     reset_tick_counter;
+    
     reg             [NB_DATA-1 : 0]         data;
     reg             [NB_DATA-1 : 0]         data_next;
     reg             [NB_DATA_COUNTER-1 : 0] data_bit_counter;
-    reg             [NB_DATA_COUNTER-1 : 0] data_bit_counter_next;
- 
+    reg                                     reset_data_counter;
+    reg                                     inc_data_counter;
+
     reg                                     tx;
     reg                                     tx_next;
 
-    assign                                  o_data              = tx;
+    assign                                  o_data  = tx;
 
     always @(posedge i_clock)
     begin
@@ -50,31 +52,41 @@ module uart_tx
         if(i_reset)
         begin
             state                   <=  IDLE;
-            tick_counter            <=  {NB_TICK_COUNTER{1'b0}};
             data                    <=  {NB_DATA{1'b1}};
-            data_bit_counter        <=  {NB_DATA_COUNTER{1'b0}};
             tx                      <=  1'b1;
         end
         else
         begin
             state                   <=  state_next;
-            tick_counter            <=  tick_counter_next;
             data                    <=  data_next;
-            data_bit_counter        <=  data_bit_counter_next;
             tx                      <=  tx_next;
         end
     end
 
+    always @ (posedge i_clock)
+    begin
+        if(i_reset || reset_tick_counter)
+            tick_counter            <=  {NB_TICK_COUNTER{1'b0}};
+        else if(i_tick)
+            tick_counter            <=  tick_counter + 1;
+    end
+
+    always @ (posedge i_clock)
+    begin
+        if(i_reset || reset_data_counter)
+            data_bit_counter        <= {NB_DATA_COUNTER{1'b0}};
+        else if(inc_data_counter)
+            data_bit_counter        <= data_bit_counter + 1;      
+    end
+
     always @(*)
     begin
-
-            state_next                              =   state;
-            tick_counter_next                       =   tick_counter;
-            data_next                               =   data;
-            data_bit_counter_next                   =   data_bit_counter;
-            tx_next                                 =   tx;
-            
-
+            state_next                              = state;
+            reset_tick_counter                      = 1'b0;
+            data_next                               = data;
+            reset_data_counter                      = 1'b0;
+            inc_data_counter                        = 1'b0;  
+            tx_next                                 = tx;
 
         case (state)
 
@@ -84,79 +96,55 @@ module uart_tx
                 if(i_start)
                 begin
                     state_next                      = START;
-                    tick_counter_next               = 0;
+                    reset_tick_counter              = 1'b1;
                     data_next                       = i_data;
                 end
             end
 
             START:
-            begin
-                
-                tx_next                             = 1'b0;
-                if(i_tick)
+            begin 
+                tx_next                             = 1'b0;                 
+                if(tick_counter == N_TICKS-1)
                 begin
-                                       
-                    if(tick_counter == N_TICKS-1)
-                    begin
-                        data_bit_counter_next       = 0;
-                        state_next                  = SEND;
-                        tick_counter_next           = 0;
-                    end
-                    else    
-                        tick_counter_next           = tick_counter + 1;
+                    reset_data_counter              = 1'b1;
+                    state_next                      = SEND;
+                    reset_tick_counter              = 1'b1;
                 end
             end
 
             SEND:
             begin
-
-                tx_next                             =   data[0];
-                if(i_tick)
+                tx_next                             = data[0];
+                if(tick_counter ==  N_TICKS-1)
                 begin
+                    data_next                       = data >> 1;
+                    reset_tick_counter              = 1'b1;
 
-                    if(tick_counter ==  N_TICKS-1)
+                    if(data_bit_counter == NB_DATA-1)
                     begin
-                        data_next                   = data >> 1;
-                        tick_counter_next           = 1'b0;
-
-                        if(data_bit_counter == NB_DATA-1)
-                        begin
-                            state_next              = STOP;
-
-                        end
-                        else
-                            data_bit_counter_next   = data_bit_counter + 1;
+                        state_next                  = STOP;
+                        reset_data_counter          = 1'b0;
                     end
                     else
-                        tick_counter_next           =   tick_counter + 1;
-
+                        inc_data_counter            = 1'b1;
                 end
             end
 
             STOP:
             begin
                 data_next                           = 1'b1;
-                if(i_tick)
+                if(tick_counter == N_STOP_TICKS-1)
                 begin
-
-                    if(tick_counter == N_STOP_TICKS-1)
-                    begin
-                        state_next                  =   IDLE;
-                    end
-                    else
-                        tick_counter_next           =   tick_counter + 1;
+                    state_next                      = IDLE;
                 end
             end
 
             default:
             begin
-                state_next                          =   IDLE;
-                data_bit_counter_next               =   {NB_DATA_COUNTER{1'b0}};
-                tick_counter_next                   =   {NB_TICK_COUNTER{1'b0}};     
+                state_next                          = IDLE;
+                reset_data_counter                  = 1'b1;   
             end
-
         endcase
-
     end
 
 endmodule
