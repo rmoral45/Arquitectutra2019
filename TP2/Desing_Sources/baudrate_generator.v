@@ -2,15 +2,15 @@
 
 module baudrate_generator
 #(
-    parameter                   BAUD_DATE       = 9600,
-    parameter                   SYS_CLOCK       = 100**6, 
-    parameter                   TICK_RATE       = SYS_CLOCK / (BAUD_DATE*16),
+    parameter                   BAUD_RATE       = 9600,
+    parameter                   SYS_CLOCK       = 100000000, 
+    parameter                   TICK_RATE       = SYS_CLOCK / (BAUD_RATE*16),
     parameter                   NB_TICK_COUNTER = $clog2(TICK_RATE)                  
 )
 (
-    input wire                  i_clock;
-    input wire                  i_reset;
-    output wire                 o_tick;
+    input wire                  i_clock,
+    input wire                  i_reset,
+    output wire                 o_tick
 );
 
     reg [NB_TICK_COUNTER-1 : 0] counter;
@@ -22,10 +22,10 @@ module baudrate_generator
     begin
 
         if(i_reset)
-            counter <= {NB_COUNTER{1'b0}};
+            counter <= {NB_TICK_COUNTER{1'b0}};
 
         else if(reset_counter)
-            counter <= {NB_COUNTER{1'b0}};
+            counter <= {NB_TICK_COUNTER{1'b0}};
 
         else
             counter <= counter + 1;    

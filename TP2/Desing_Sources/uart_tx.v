@@ -4,7 +4,7 @@ module uart_tx
 #(
     parameter                               NB_DATA             = 8,
     parameter                               NB_STOP             = 1,
-    parameter                               BAUD_RATE           = 9600
+    parameter                               BAUD_RATE           = 9600,
     parameter                               SYS_CLOCK           = 100**6,
     parameter                               TICK_RATE           = SYS_CLOCK / (BAUD_RATE*16),
     parameter                               NB_TICK_COUNTER     = $clog2(TICK_RATE),
@@ -16,15 +16,14 @@ module uart_tx
     input wire                              i_tick,
     input wire      [NB_DATA-1 : 0]         i_data,
     input wire                              i_start,
-    output wire                             o_data,
-    output wire                             o_data_valid
+    output wire                             o_data
 );
 
     localparam                              N_STATES            = 4;
     localparam                              N_TICKS             = 16;
     localparam                              N_STOP_TICKS        = NB_STOP*N_TICKS;
-    localparam                              NB_MIDDLE_START_BIT = 7
-    localparam                              NB_MIDDLE_DATA_BIT  = 15
+    localparam                              NB_MIDDLE_START_BIT = 7;
+    localparam                              NB_MIDDLE_DATA_BIT  = 15;
     //states
     localparam      [N_STATES-1 : 0]        IDLE                = 4'b0001;
     localparam      [N_STATES-1 : 0]        START               = 4'b0010;
@@ -39,8 +38,11 @@ module uart_tx
     reg             [NB_DATA-1 : 0]         data_next;
     reg             [NB_DATA_COUNTER-1 : 0] data_bit_counter;
     reg             [NB_DATA_COUNTER-1 : 0] data_bit_counter_next;
+ 
+    reg                                     tx;
+    reg                                     tx_next;
 
-    assign                                  o_data              = data;
+    assign                                  o_data              = tx;
 
     always @(posedge i_clock)
     begin
@@ -49,8 +51,9 @@ module uart_tx
         begin
             state                   <=  IDLE;
             tick_counter            <=  {NB_TICK_COUNTER{1'b0}};
-            data                    <=  {NB_DATA{1'b0}};
+            data                    <=  {NB_DATA{1'b1}};
             data_bit_counter        <=  {NB_DATA_COUNTER{1'b0}};
+            tx                      <=  1'b1;
         end
         else
         begin
@@ -58,24 +61,26 @@ module uart_tx
             tick_counter            <=  tick_counter_next;
             data                    <=  data_next;
             data_bit_counter        <=  data_bit_counter_next;
+            tx                      <=  tx_next;
         end
     end
 
-    always *
+    always @(*)
     begin
 
             state_next                              =   state;
             tick_counter_next                       =   tick_counter;
             data_next                               =   data;
             data_bit_counter_next                   =   data_bit_counter;
-            o_data_valid                            =   1'b0;
+            tx_next                                 =   tx;
+            
 
-        case state:
+
+        case (state)
 
             IDLE:
             begin
-            
-                tx_next                             = 1'b1;
+                tx_next                             = 1'b1;            //linea idle en 1
                 if(i_start)
                 begin
                     state_next                      = START;
@@ -87,10 +92,10 @@ module uart_tx
             START:
             begin
                 
-                tx_next =   1'b0;
+                tx_next                             = 1'b0;
                 if(i_tick)
                 begin
-
+                                       
                     if(tick_counter == N_TICKS-1)
                     begin
                         data_bit_counter_next       = 0;
@@ -105,7 +110,7 @@ module uart_tx
             SEND:
             begin
 
-                tx_next =   data[0];
+                tx_next                             =   data[0];
                 if(i_tick)
                 begin
 
@@ -115,21 +120,43 @@ module uart_tx
                         tick_counter_next           = 1'b0;
 
                         if(data_bit_counter == NB_DATA-1)
+                        begin
                             state_next              = STOP;
+
+                        end
                         else
                             data_bit_counter_next   = data_bit_counter + 1;
-                    
+                    end
                     else
                         tick_counter_next           =   tick_counter + 1;
-                    end
 
                 end
             end
 
             STOP:
             begin
-                
+                data_next                           = 1'b1;
+                if(i_tick)
+                begin
+
+                    if(tick_counter == N_STOP_TICKS-1)
+                    begin
+                        state_next                  =   IDLE;
+                    end
+                    else
+                        tick_counter_next           =   tick_counter + 1;
+                end
             end
 
+            default:
+            begin
+                state_next                          =   IDLE;
+                data_bit_counter_next               =   {NB_DATA_COUNTER{1'b0}};
+                tick_counter_next                   =   {NB_TICK_COUNTER{1'b0}};     
+            end
+
+        endcase
 
     end
+
+endmodule
