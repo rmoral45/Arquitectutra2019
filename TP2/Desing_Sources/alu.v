@@ -9,7 +9,7 @@ module alu
     input wire signed       [NB_DATA-1 : 0]         i_first_operator,
     input wire signed       [NB_DATA-1 : 0]         i_second_operator,
     input wire signed       [NB_OPCODE-1 : 0]       i_opcode,
-    output reg              [NB_DATA-1 : 0]         o_result
+    output reg signed       [NB_DATA-1 : 0]         o_result
 );
 
     localparam              [NB_OPCODE-1 : 0]       ADD = 6'b100000;
