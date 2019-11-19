@@ -9,9 +9,9 @@ module bip
 (
     input wire                          i_clock,
     input wire                          i_reset
-)
+);
 
-    localparam                          FILE = "";
+    localparam                          FILE = "/home/ramiro/repos/Arquitectutra2019/TP3/suma.txt";
 
 //----------------------(ROM - CPU)---------------------- 
     wire        [NB_INSTRUCTION-1 : 0]  rom_data_cpu;
@@ -25,9 +25,6 @@ module bip
     wire        [NB_INSTRUCTION-1 : 0]  cpu_data_ram;
     wire                                cpu_wrEnable_ram;
     wire                                cpu_rdEnable_ram;
-
-    
-    
 
 rom
 #(
