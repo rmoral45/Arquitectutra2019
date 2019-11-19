@@ -7,8 +7,8 @@ module rom
     parameter                       FILE            = ""
 )
 (   
-    input wire                          i_clock,
-    input wire                          i_reset,
+//    input wire                          i_clock,
+//    input wire                          i_reset,
     input wire  [NB_ADDR-1 : 0]         i_read_addr, 
     output wire [NB_INSTRUCTION-1 : 0]  o_data
 );

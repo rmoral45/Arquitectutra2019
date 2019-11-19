@@ -20,7 +20,7 @@ module control_unit
     output wire                         o_operation,
     output wire                         o_wr_enb_ram,
     output wire                         o_rd_enb_ram
-)
+);
 
     //signals from instruction_decoder module
     wire                                enb_program_counter;
@@ -39,6 +39,8 @@ module control_unit
     begin
         if(i_reset)
             program_counter <= {NB_INSTRUCTION{1'b0}};
+        else if(i_opcode == {NB_OPCODE{1'b0}})
+            program_counter <= program_counter;
         else if(enb_program_counter)
             program_counter <= program_counter + 1;
     end
@@ -58,5 +60,6 @@ u_instruction_decoder
     .o_operation    (operation),
     .o_wr_enb_ram   (wr_enb_ram),
     .o_rd_enb_ram   (rd_enb_ram)
-)
+);
+
 endmodule

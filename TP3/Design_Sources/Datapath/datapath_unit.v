@@ -15,9 +15,8 @@ module datapath_unit
     input wire  [NB_SELECTOR_A-1 : 0]   i_sel_a,
     input wire                          i_sel_b,
     input wire                          i_enb_acc,
-    input wire                          i_operation
+    input wire                          i_operation,
 
-    output wire [NB_ADDR-1 : 0]         o_ram_addr,  
     output wire [NB_INSTRUCTION-1 : 0]  o_ram_data
 );
 
@@ -37,22 +36,25 @@ module datapath_unit
     genvar i;
     for(i=0; i<NB_OPCODE; i=i+1)
     begin: ger_sign_extension
-        assign sign = i_operand[NB_OPERAND-1]
+        assign sign = i_operand[NB_OPERAND-1];
     end
     //end of generate
+
+    assign                              o_ram_data          =   accumulator;   
 
     assign                              signal_extension    =   {{sign, i_operand}};
 
     assign                              mux_a               =   (i_sel_a == 2'b00) ? i_ram_data[NB_OPERAND-1 : 0] :
-                                                                (i_sel_a == 2'b01) ? signal_extension :
-                                                                (i_sel_a == 2'b10) ? adder_result;
+                                                                (i_sel_a == 2'b01) ? signal_extension             :
+                                                                (i_sel_a == 2'b10) ? adder_result                 :
+                                                                {NB_SELECTOR_A{1'b1}};
 
-    assign                              mux_b               =   (!i_sel_b)  ? i_ram_data[NB_OPERAND-1 : 0] :
-                                                                (i_sel_b)   ? signal_extension;
+    assign                              mux_b               =   (!i_sel_b)  ? i_ram_data[NB_OPERAND-1 : 0] : signal_extension;
+
     always @(posedge i_clock)
     begin
         if(i_reset)
-            {NB_INSTRUCTION{1'b0}};
+            accumulator <= {NB_INSTRUCTION{1'b0}};
         else if(i_enb_acc)
             accumulator <= accumulator; 
     end       

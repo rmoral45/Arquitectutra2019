@@ -63,6 +63,8 @@ module instruction_decoder
             begin
                 enb_pc      =   1'b1;
                 enb_acc     =   1'b1;
+                wr_enb_ram  =   1'b1;
+                
             end
 
             LOAD:
@@ -70,6 +72,7 @@ module instruction_decoder
                 enb_pc      =   1'b1;
                 enb_acc     =   1'b1;
                 sel_a       =   2'b00;
+                rd_enb_ram  =   1'b1;
             end
 
             LOADI:
@@ -86,6 +89,7 @@ module instruction_decoder
                 operation   =   1'b1;
                 sel_a       =   2'b10;
                 sel_b       =   1'b1;
+                rd_enb_ram  =   1'b1;                
             end
 
             ADDI:
@@ -104,6 +108,7 @@ module instruction_decoder
                 operation   =   1'b0;
                 sel_a       =   2'b10;
                 sel_b       =   1'b1;
+                rd_enb_ram  =   1'b1;                
             end
 
             SUBI:                
@@ -128,3 +133,5 @@ module instruction_decoder
         endcase
 
     end
+    
+endmodule

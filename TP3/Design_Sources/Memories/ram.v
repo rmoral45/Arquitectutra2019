@@ -18,7 +18,7 @@ module ram
     reg         [NB_INSTRUCTION-1 : 0]  ram [RAM_DEPTH-1 : 0];
 
     //reading - low latency
-    assign                              o_data = (i_read_address) ? ram[i_read_address];
+    assign                              o_data = (i_read_address) ? ram[i_read_address] : {NB_ADDR{1'b0}};
 
     //writing
     always @(posedge i_clock)
@@ -27,3 +27,5 @@ module ram
         if(i_write_enable)
             ram[i_write_address] <= i_data;
     end   
+    
+ endmodule
