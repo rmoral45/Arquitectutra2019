@@ -38,7 +38,7 @@ module control_unit
     always @(posedge i_clock)
     begin
         if(i_reset)
-            program_counter <= 1'b0;
+            program_counter <= {NB_INSTRUCTION{1'b0}};
         else if(enb_program_counter)
             program_counter <= program_counter + 1;
     end
