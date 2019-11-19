@@ -1,2 +1,5 @@
-#ignoring svg files
+#ignoring svg and pdf files
 **.svg
+**.pdf
+
+
