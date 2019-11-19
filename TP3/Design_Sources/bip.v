@@ -11,7 +11,7 @@ module bip
     input wire                          i_reset
 );
 
-    localparam                          FILE = "/home/ramiro/repos/Arquitectutra2019/TP3/suma.txt";
+    localparam                          FILE = "/home/ramiro/repos/Arquitectutra2019/TP3/programa1.txt";
 
 //----------------------(ROM - CPU)---------------------- 
     wire        [NB_INSTRUCTION-1 : 0]  rom_data_cpu;
