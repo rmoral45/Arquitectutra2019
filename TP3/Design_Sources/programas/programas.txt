@@ -1,0 +1,23 @@
+add_immediate.txt: 
+            - carga un 1 en el acumulador de manera inmediata.
+            - suma el contenido del acumulador con un 2 de manera inmediata.
+
+programa2_txt:
+            - carga un 1 en el acumulador de manera inmediata.
+            - realiza un store en la primera posocion de la ram.
+            - carga un 3 en el acumulador de manera inmediata.
+            - resta el 3 con el 1 de la memoria.
+
+programa3_txt:
+            - carga un 1 en el acumulador de manera inmediata.
+            - realiza un store en la primera posocion de la ram.
+            - carga un 3 en el acumulador de manera inmediata.
+            - resta el 3 con el 1 de la memoria.
+            - luego resta 1 al resultado de manera inmediata.
+
+programa4_txt:
+            - carga un 8 en el acumulador de manera inmediata
+            - resta uno y almacena en ram. El proceso se repite 3 veces. La ultima resta no la almacena
+            - Suma los tres resultados y los guarda en la cuarta posicion de memoria.
+            - carga un 32 y lo resta con el resultado. 
+            - guarda el resultado en la primer posocion de memoria.
