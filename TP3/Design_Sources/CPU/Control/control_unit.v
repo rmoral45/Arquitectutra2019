@@ -19,21 +19,28 @@ module control_unit
     output wire                         o_enb_acc,                      
     output wire                         o_operation,
     output wire                         o_wr_enb_ram,
-    output wire                         o_rd_enb_ram
+    output wire                         o_program_done
 );
 
     //signals from instruction_decoder module
     wire                                enb_program_counter;
-    wire                                sel_a;
+    wire        [NB_SELECTOR_A-1 : 0]   sel_a;
     wire                                sel_b;
     wire                                enb_acc;
     wire                                operation;
     wire                                wr_enb_ram;
     wire                                rd_enb_ram;
+    wire                                program_done;
     //internal signals
     reg         [NB_ADDR-1 : 0]         program_counter;
 
-    assign                              o_address       = program_counter;   
+    assign                              o_address       = program_counter;
+    assign                              o_sel_a         = sel_a;
+    assign                              o_sel_b         = sel_b;
+    assign                              o_enb_acc       = enb_acc;
+    assign                              o_operation     = operation;
+    assign                              o_wr_enb_ram    = wr_enb_ram;
+    assign                              o_program_done  = program_done;
 
     always @(posedge i_clock)
     begin
@@ -59,7 +66,7 @@ u_instruction_decoder
     .o_enb_acc      (enb_acc),
     .o_operation    (operation),
     .o_wr_enb_ram   (wr_enb_ram),
-    .o_rd_enb_ram   (rd_enb_ram)
+    .o_program_done (program_done)
 );
 
 endmodule

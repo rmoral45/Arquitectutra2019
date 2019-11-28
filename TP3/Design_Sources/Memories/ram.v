@@ -8,7 +8,7 @@ module ram
 (
     input wire                          i_clock,
     input wire                          i_write_enable,
-    input wire                          i_read_enable,
+    //input wire                          i_read_enable,
     input wire  [NB_ADDR-1 : 0]         i_write_address,
     input wire  [NB_ADDR-1 : 0]         i_read_address,
     input wire  [NB_INSTRUCTION-1 : 0]  i_data,
@@ -18,7 +18,7 @@ module ram
     reg         [NB_INSTRUCTION-1 : 0]  ram [RAM_DEPTH-1 : 0];
 
     //reading - low latency
-    assign                              o_data = (i_read_address) ? ram[i_read_address] : {NB_ADDR{1'b0}};
+    assign                              o_data = ram[i_read_address];
 
     //writing
     always @(posedge i_clock)

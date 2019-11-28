@@ -18,7 +18,7 @@ module cpu
     output wire [NB_ADDR-1 : 0]         o_ram_addr,
     output wire [NB_INSTRUCTION-1 : 0]  o_ram_data,
     output wire                         o_ram_wr_enable,
-    output wire                         o_ram_rd_enable
+    output wire                         o_program_done
 );
 
 //----------------------(CPU - ROM)-----------------------------------------
@@ -42,6 +42,11 @@ module cpu
     wire        [NB_OPERAND-1 : 0]      cpu_operand_datapath;
     assign                              cpu_operand_datapath = i_rom_data[NB_OPERAND-1 -: NB_OPERAND];
 
+//----------------------(CPU - BIP)--------------------------------
+    wire                                program_done;
+    assign                              o_program_done       = program_done; 
+    
+
 
 control_unit
 #(
@@ -61,7 +66,7 @@ u_control_unit
     .o_enb_acc      (ctrlUnit_enableAcc_datapath),
     .o_operation    (ctrlUnit_operation_datapath),
     .o_wr_enb_ram   (o_ram_wr_enable),
-    .o_rd_enb_ram   (o_ram_rd_enable)
+    .o_program_done (program_done)
 );
 
 datapath_unit

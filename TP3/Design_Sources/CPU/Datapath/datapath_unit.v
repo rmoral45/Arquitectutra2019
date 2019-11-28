@@ -20,8 +20,8 @@ module datapath_unit
     output wire [NB_INSTRUCTION-1 : 0]  o_ram_data
 );
 
-    localparam                          ADD                 = 1'b0;
-    localparam                          SUB                 = 1'b1;
+    localparam                          ADD                 = 1'b1;
+    localparam                          SUB                 = 1'b0;
 
     reg         [NB_INSTRUCTION-1 : 0]  accumulator;
     reg         [NB_INSTRUCTION-1 : 0]  adder_result;   
@@ -29,6 +29,8 @@ module datapath_unit
     wire        [NB_INSTRUCTION-1 : 0]  mux_a;
     wire        [NB_INSTRUCTION-1 : 0]  mux_b;
     wire        [NB_INSTRUCTION-1 : 0]  signal_extension;
+    
+    
     wire        [NB_OPCODE-1 : 0]       sign;
 
 
@@ -36,33 +38,39 @@ module datapath_unit
     genvar i;
     for(i=0; i<NB_OPCODE; i=i+1)
     begin: ger_sign_extension
-        assign sign = i_operand[NB_OPERAND-1];
+        assign sign[i] = i_operand[NB_OPERAND-1];
     end
     //end of generate
 
     assign                              o_ram_data          =   accumulator;   
 
     assign                              signal_extension    =   {{sign, i_operand}};
-
-    assign                              mux_a               =   (i_sel_a == 2'b00) ? i_ram_data[NB_OPERAND-1 : 0] :
-                                                                (i_sel_a == 2'b01) ? signal_extension             :
-                                                                (i_sel_a == 2'b10) ? adder_result                 :
-                                                                {NB_SELECTOR_A{1'b1}};
-
-    assign                              mux_b               =   (!i_sel_b)  ? i_ram_data[NB_OPERAND-1 : 0] : signal_extension;
+    
+    assign                              mux_b               =   (!i_sel_b)  ? signal_extension : i_ram_data;
 
     always @(posedge i_clock)
     begin
         if(i_reset)
             accumulator <= {NB_INSTRUCTION{1'b0}};
         else if(i_enb_acc)
-            accumulator <= accumulator; 
+        begin
+            if(i_sel_a == 2'b00)
+                accumulator <= i_ram_data;
+            else if(i_sel_a == 2'b01)
+                accumulator <= signal_extension;
+            else if(i_sel_a == 2'b10)
+                accumulator <= adder_result;
+            else
+                accumulator <= accumulator;
+        end
     end       
 
     always @ *
     begin
 
-        case(i_operand)
+        adder_result = {NB_INSTRUCTION{1'b0}};
+
+        case(i_operation)
 
             ADD:
                 adder_result = accumulator + mux_b;
