@@ -17,16 +17,19 @@ module alu
     input wire                                          i_signed_operation
 );
     /*                              Localparameters                                 */
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_SLL                 = 4'b0000;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_SRL                 = 4'b0010;  
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_SRA                 = 4'b0011;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_ADD                 = 4'b0001;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_SUB                 = 4'b1101;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_AND                 = 4'b0100;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_OR                  = 4'b0101;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_XOR                 = 4'b0110;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_NOR                 = 4'b0111;
-    localparam              [NB_ALU_OPCODE-1    : 0]    ALU_SLT                 = 4'b1111;
+    
+    localparam                                          ALU_SLL         = 4'b0000;
+    localparam                                          ALU_SRL         = 4'b0010;  
+    localparam                                          ALU_SRA         = 4'b0011;
+    localparam                                          ALU_ADD         = 4'b1100;
+    localparam                                          ALU_SUB         = 4'b1011;
+    localparam                                          ALU_AND         = 4'b0100;
+    localparam                                          ALU_OR          = 4'b1101;
+    localparam                                          ALU_XOR         = 4'b1110;
+    localparam                                          ALU_NOR         = 4'b0111;
+    localparam                                          ALU_SLT         = 4'b1001;
+    localparam                                          ALU_LUI         = 4'b1111;
+
 
     /*                              Internal Signals                                */
     reg                     [NB_DATA-1      : 0]        result;
