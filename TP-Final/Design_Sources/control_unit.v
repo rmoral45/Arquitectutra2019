@@ -20,7 +20,7 @@ module control_unit
     output wire                         o_inmediate_operation,
 
     //Inputs
-    input wire  [NB_ADDR-1  : 0]        instruction_type
+    input wire  [NB_ADDR-1  : 0]        i_instruction_type
 );
 
     /*                                              Localparameters                                                 */
@@ -62,7 +62,6 @@ module control_unit
 
     always @ *
     begin
-
         casez(instruction_type)
         begin
 
@@ -151,9 +150,11 @@ module control_unit
             end
 
             
-        default: 
-        begin
+            default: 
+            begin
 
-        end
+            end
         endcase 
     end
+
+endmodule

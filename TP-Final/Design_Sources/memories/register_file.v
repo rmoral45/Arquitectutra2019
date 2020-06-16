@@ -11,12 +11,14 @@ module register_file
     output  wire    [NB_DATA-1 : 0] o_data_b,
 
     //Inputs
-    input   wire                    i_clock,
     input   wire                    i_write_enable,
     input   wire    [NB_ADDR-1 : 0] i_write_addr,
     input   wire    [NB_ADDR-1 : 0] i_read_addr_a,
     input   wire    [NB_ADDR-1 : 0] i_read_addr_b,
     input   wire    [NB_DATA-1 : 0] i_data
+
+    //Clocking
+    input   wire                    i_clock,
 );
     /*                              Internal Signals                                */
     reg             [NB_DATA-1 : 0] register_file [RAM_DEPTH-1 : 0];
