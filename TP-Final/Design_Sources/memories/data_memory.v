@@ -20,7 +20,7 @@ module data_memory
     input wire                          i_clock
     
 );
-    //Internal signals
+    //Internal signals1
     reg         [NB_INSTRUCTION-1 : 0]  data_memory [RAM_DEPTH-1 : 0];
 
     //writing

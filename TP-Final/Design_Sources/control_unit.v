@@ -48,7 +48,7 @@ module control_unit
 
 
     /*                                              Internal Signals                                                */
-    reg                                 rf_wr_addr_src;     //0 from rt, 1 from rd
+    reg                                 rf_wr_addr_src;     //0 to rt, 1 to rd
     reg                                 rf_wr_data_src;     //0 from alu, 1 from data_memory
     reg                                 rf_wr_enb;
     reg                                 branch;
