@@ -26,9 +26,9 @@ module alu_ctrl
     localparam                                          CTRL_SLLV       = 6'b001010;
     localparam                                          CTRL_SRLV       = 6'b000110;
     localparam                                          CTRL_SRAV       = 6'b000001;
-    localparam                                          CTRL_ADD        = 6'b111100;
+    localparam                                          CTRL_ADD        = 6'b111000;
     localparam                                          CTRL_SUB        = 6'b001011;
-    localparam                                          CTRL_AND        = 6'b100100;
+    localparam                                          CTRL_AND        = 6'b111100;
     localparam                                          CTRL_OR         = 6'b111101;
     localparam                                          CTRL_XOR        = 6'b111110;
     localparam                                          CTRL_NOR        = 6'b100111;

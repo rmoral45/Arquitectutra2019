@@ -32,7 +32,9 @@ module control_unit
     localparam                          LBU             =   6'b100100;
     localparam                          LHU             =   6'b100101;
     localparam                          SB              =   6'b101000;
-    localparam                          SH              =   6'b101000;
+    localparam                          SH              =   6'b101001;
+    localparam                          SW              =   6'b101011;
+    localparam                          ADDI            =   6'b111000;
     localparam                          ANDI            =   6'b111100;
     localparam                          ORI             =   6'b111101;
     localparam                          XORI            =   6'b111110;
@@ -62,10 +64,10 @@ module control_unit
 
     always @ *
     begin
-        casez(instruction_type)
+        casez(i_instruction_type)
         begin
 
-            6'b00????   : RTYPE_CASE
+            6'b0000??   : RTYPE_CASE
             begin
                 rf_wr_addr_src          = 1'b1;
                 rf_wr_data_src          = 1'b0;
