@@ -50,8 +50,6 @@ def lh(arg_list): #alu_ctrl_opcode: load - alu_opcode: add
     return '100001'+arg_list[2]+arg_list[0]+arg_list[1]
 
 def lw(arg_list): #alu_ctrl_opcode: load - alu_opcode: add
-    print 'LW executed'
-    print ('LW arg_list: ', arg_list)
     return '100011'+arg_list[2]+arg_list[0]+arg_list[1]
 
 def lwu(arg_list): #alu_ctrl_opcode: load - alu_opcode: add
@@ -102,38 +100,38 @@ def bne(arg_list): #alu_ctrl_opcode: his own - alu_opcode: sub
 #falta implementar: jr, jalr, j, jal
 
 instructions = {
-        'SLL': sll,
-        'SRL': srl,
-        'SRA': sra,
-        'SLLV': sllv,
-        'SRLV': srlv, 
-        'SRAV': srav,
-        'ADD': add,
-        'SUB': sub,
-        'AND': andinst, 
-        'OR': orinst,
-        'XOR': xor,
-        'NOR': nor,
-        'SLT': slt,
+        'SLL': (sll, 'rtype'),
+        'SRL': (srl, 'rtype'),
+        'SRA': (sra, 'rtype'),
+        'SLLV': (sllv, 'rtype'),
+        'SRLV': (srlv, 'rtype'), 
+        'SRAV': (srav, 'rtype'),
+        'ADD': (add, 'rtype'),
+        'SUB': (sub, 'rtype'),
+        'AND': (andinst, 'rtype'), 
+        'OR': (orinst, 'rtype'),
+        'XOR': (xor, 'rtype'),
+        'NOR': (nor, 'rtype'),
+        'SLT': (slt, 'rtype'),
         #'JR': jr, 
         #'JALR': jalr,
-        'LB': lb,
-        'LH': lh,
-        'LW': lw, 
-        'LWU': lwu,
-        'LBU': lbu,
-        'LHU': lhu,
-        'SB': sb,
-        'SH': sh,
-        'SW': sw,
-        'ADDI': addi,
-        'ANDI': andi, 
-        'ORI': ori,
-        'XORI': xori,
-        'LUI': lui, 
-        'SLTI': slti,
-        'BEQ': beq,
-        'BNE': bne
+        'LB': (lb, 'itype'),
+        'LH': (lh, 'itype'),
+        'LW': (lw, 'itype'), 
+        'LWU': (lwu, 'itype'),
+        'LBU': (lbu, 'itype'),
+        'LHU': (lhu, 'itype'),
+        'SB': (sb, 'itype'),
+        'SH': (sh, 'itype'),
+        'SW': (sw, 'itype'),
+        'ADDI': (addi, 'itype'),
+        'ANDI': (andi, 'itype'), 
+        'ORI': (ori, 'itype'),
+        'XORI': (xori, 'itype'),
+        'LUI': (lui, 'lui'), 
+        'SLTI': (slti, 'itype'),
+        'BEQ': (beq, 'itype'),
+        'BNE': (bne, 'itype')
         #'J': j,
         #'JAL': jal
 }
