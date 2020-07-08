@@ -5,11 +5,17 @@ import instruction_dictionary as inst_dict
 
 NB_ADDR = 5
 NB_IMM_OFF = 16
+HALT = '0000000000000000'        
 
 def main():
 
-    program_coe = open('../test/coe/test0.coe', 'w')
-    program_asm = open('../test/asm/test0.asm', 'r')
+    test_case = raw_input('Ingrese test_case a compilar: ')
+
+    testcase_asmfile = '../test/asm/' + test_case + '.asm'
+    testcase_coefile = '../test/coe/' + test_case + '.coe'
+
+    program_coe = open(testcase_coefile, 'w')
+    program_asm = open(testcase_asmfile, 'r')
     instructions_per_line = program_asm.readlines()
 
     print("instructions_per_line: ", instructions_per_line)
@@ -44,6 +50,10 @@ def main():
         inst_to_coe = function(bin_arg)
         print("INSTRUCCION DECODIFICADA: %s | TAMANIO: %d ", (inst_to_coe, len(inst_to_coe)))
         program_coe.write(inst_to_coe+'\n')
+        
+
+
+    program_coe.write(str(0).zfill(32))
             
     return 
 
