@@ -3,19 +3,19 @@ module program_memory
 #(
     parameter                               NB_ADDR         = 5,
     parameter                               NB_DATA         = 2**NB_ADDR,
-    parameter                               ROM_DEPTH       = 1024,
+    parameter                               ROM_DEPTH       = 30,
     parameter                               FILE            = ""
 )
 (   
     //Outputs
-    output wire [NB_INSTRUCTION-1   : 0]    o_data,
+    output wire [NB_DATA-1   : 0]           o_data,
 
     //Inputs
     input wire  [NB_ADDR-1          : 0]    i_read_addr
 );
 
     /*                              Internal Signals                                */
-    reg         [NB_INSTRUCTION-1   : 0]    rom [ROM_DEPTH-1 : 0];
+    reg         [NB_DATA-1   : 0]           rom [ROM_DEPTH-1 : 0];
 
     /*                              Alu algorithm begins                            */
     initial

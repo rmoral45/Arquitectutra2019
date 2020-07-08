@@ -17,30 +17,43 @@ module instruction_fetch_unit
     input wire  [NB_DATA-1      : 0]        i_branch_addr,
 
     //Clocking
-    input wire                              i_clock
+    input wire                              i_clock,
+    input wire                              i_reset
 );
 
     //Internal signals
-    reg         [NB_DATA-1      : 0]        instruction_memory;
+    wire        [NB_DATA-1      : 0]        instruction_from_memory;
     reg         [NB_DATA-1      : 0]        instruction_fetched;
     reg         [NB_ADDR-1      : 0]        pc;
-    reg         [NB_ADDR-1      : 0]        pc_next;
-    reg         [NB_ADDR-1      : 0]        pc_inc;
+    wire        [NB_ADDR-1      : 0]        pc_next;
+    wire        [NB_ADDR-1      : 0]        pc_inc;
+    wire                                    halt_flag;
+    
+    assign                                  halt_flag               =   (instruction_from_memory == {NB_DATA{1'b0}});
+    
 
     //PC Algorithm
     always @ (posedge i_clock)
     begin
-        pc                      <=          pc_next;
+        if(i_reset)
+            pc                  <=          {NB_DATA{1'b0}};
+        else if(halt_flag)
+            pc                  <=          pc;
+        else
+            pc                  <=          pc_next;
     end
 
-    assign                                  pc_inc                  =   pc + {(NB_DATA-1){1'b0}, 1'b1};
+    assign                                  pc_inc                  =   pc + {{(NB_DATA-1){1'b0}}, 1'b1};
     assign                                  pc_next                 =   i_pc_source ? pc_inc + i_branch_addr : pc_inc;
                                                                         
 
     //Instruction fetching
     always @ (posedge i_clock)
     begin
-        instruction_fetched     <=          instruction_memory;
+        if(i_reset)
+            instruction_fetched <=          {NB_DATA{1'b0}};
+        else
+            instruction_fetched <=          instruction_from_memory;
     end
 
     //Module instantiation
@@ -50,7 +63,7 @@ module instruction_fetch_unit
     )
     u_program_memory
     (
-        .o_data                             (instruction_memory),
+        .o_data                             (instruction_from_memory),
         
         .i_read_addr                        (pc)
     );                                                                                                                                

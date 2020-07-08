@@ -15,7 +15,7 @@ module instruction_decode_unit
     output wire [NB_DATA-1              : 0]    o_rf_rt_data_ltchd,
     output wire [NB_ALU_CTRL_OPCODE-1   : 0]    o_alu_ctrl_opcode_ltchd,
     output wire                                 o_alu_data_src_ltchd,
-    output wire [NB_ALU_CTRL_OPCODE-1   : 0]    o_alu_op_type_ltchd,
+    output wire [NB_ALU_OP_SEL-1        : 0]    o_alu_op_type_ltchd,
     output wire                                 o_alu_signed_operation_ltchd,
     output wire                                 o_alu_inmediate_operation_ltchd,
     output wire [NB_DATA-1              : 0]    o_inmediate_operator_ltchd,
@@ -41,7 +41,7 @@ module instruction_decode_unit
     //Input of ctrl singals to latch
     //to ex_stage
     input wire                                  i_alu_data_src,
-    input wire  [NB_ALU_OP_SEL-1       : 0]     i_alu_op_type,
+    input wire  [NB_ALU_OP_SEL-1        : 0]    i_alu_op_type,
     input wire                                  i_alu_signed_operation_ltchd,
     input wire                                  i_alu_inmediate_operation_ltchd,
     input wire  [NB_ADDR-1              : 0]    i_pc_stage_0,
@@ -77,7 +77,7 @@ module instruction_decode_unit
     reg         [NB_DATA-1              : 0]    rf_rs_data_ltchd;
     reg         [NB_DATA-1              : 0]    rf_rt_data_ltchd;
     wire        [NB_ADDR-1              : 0]    rf_sa_operator;
-    wire        [NB_ADDR-1              : 0]    rf_sa_operator_ltchd;
+    reg         [NB_ADDR-1              : 0]    rf_sa_operator_ltchd;
     reg         [NB_ADDR-1              : 0]    pc_ltchd;
     wire        [NB_DATA-1              : 0]    inmediate_operator;
     reg         [NB_DATA-1              : 0]    inmediate_operator_ltchd;
@@ -87,8 +87,8 @@ module instruction_decode_unit
     reg         [NB_ALU_OP_SEL-1        : 0]    alu_op_type_ltchd;
     reg                                         alu_signed_operation_ltchd;
     reg                                         alu_inmediate_operation_ltchd;
-    reg         [NB_ADDR-1              : o]    rf_rt_addr_ltchd;
-    reg         [NB_ADDR-1              : o]    rf_rd_addr_ltchd;
+    reg         [NB_ADDR-1              : 0]    rf_rt_addr_ltchd;
+    reg         [NB_ADDR-1              : 0]    rf_rd_addr_ltchd;
     reg                                         rf_regdst_ltchd;
     
     //Signals for pipeline to mem_stage
@@ -104,17 +104,15 @@ module instruction_decode_unit
 
     
 
-    assign                                      rf_rs_addr                      =   i_pipeline_ifu_instructiontion[RS_REG_ADDR_POSITION -: NB_ADDR];
-    assign                                      rf_rt_addr                      =   i_pipeline_ifu_instructiontion[RT_REG_ADDR_POSITION -: NB_ADDR];
-    assign                                      rf_rd_addr                      =   i_pipeline_ifu_instructiontion[RD_REG_ADDR_POSITION -: NB_ADDR];
-    assign                                      rf_wr_addr                      =   (rf_wr_addr_src)        ? rd_addr 
-                                                                                                            : rt_addr;
-    assign                                      inmediate_operator              =   {(NB_DATA-SIGN_BIT){pipeline_if_id[SIGN_BIT-1]}, pipeline_if_id[SIGN_BIT-1 -: NB_DATA/2]};
+    assign                                      rf_rs_addr                      =   i_pipeline_ifu_instruction[RS_REG_ADDR_POSITION -: NB_ADDR];
+    assign                                      rf_rt_addr                      =   i_pipeline_ifu_instruction[RT_REG_ADDR_POSITION -: NB_ADDR];
+    assign                                      rf_rd_addr                      =   i_pipeline_ifu_instruction[RD_REG_ADDR_POSITION -: NB_ADDR];
+    assign                                      inmediate_operator              =   {{(NB_DATA-SIGN_BIT){i_pipeline_ifu_instruction[SIGN_BIT-1]}}, i_pipeline_ifu_instruction[SIGN_BIT-1 -: NB_DATA/2]};
 
-    assign                                      alu_ctrl_opcode                 =   ~&(i_pipeline_ifu_instructiontion[NB_DATA-1 -: NB_CTRL_OPCODE]) ? i_pipeline_ifu_instructiontion[SA_OPE_POSITION-NB_ADDR-: NB_CTRL_OPCODE];
-                                                                                                                                                    : i_pipeline_ifu_instructiontion[NB_DATA-1              -: NB_CTRL_OPCODE];
+    assign                                      alu_ctrl_opcode                 =   ~&(i_pipeline_ifu_instruction[NB_DATA-1 -: NB_ALU_CTRL_OPCODE]) ? i_pipeline_ifu_instruction[SA_OPE_POSITION-NB_ADDR-: NB_ALU_CTRL_OPCODE]
+                                                                                                                                                    : i_pipeline_ifu_instruction[NB_DATA-1              -: NB_ALU_CTRL_OPCODE];
 
-    assign                                      rf_sa_operator                  =   {(NB_DATA-NB_ADDR){1'b0}, i_pipeline_ifu_instructiontion[SA_OPE_POSITION        -: NB_ADDR]};                                                                                                        
+    assign                                      rf_sa_operator                  =   {{(NB_DATA-NB_ADDR){1'b0}}, i_pipeline_ifu_instruction[SA_OPE_POSITION -: NB_ADDR]};                                                                                                        
 
     
     //ex_stage signals latch (pipeline)
@@ -136,7 +134,7 @@ module instruction_decode_unit
     end
 
     //mem_stage signals latch (pipeline)
-    always @ (posegde i_clock)
+    always @ (posedge i_clock)
     begin
         data_mem_wr_enb_ltchd           <=      i_data_mem_wr_enb;
         data_mem_rd_enb_ltchd           <=      i_data_mem_rd_enb;

@@ -47,7 +47,6 @@ module alu
         signed_second_operator          =           i_second_operator;
 
             case(i_opcode)
-            begin
                 ALU_SLL     :   result  =           i_first_operator        <<      i_second_operator; 
                 ALU_SRL     :   result  =           i_first_operator        >>      i_second_operator; 
                 ALU_SRA     :   result  =           i_first_operator        >>>     i_second_operator;
@@ -60,9 +59,9 @@ module alu
                 ALU_XOR     :   result  =           i_first_operator        ^       i_second_operator;
                 ALU_NOR     :   result  =           ~(i_first_operator      |       i_second_operator);
                 ALU_SLT     :   result  = {31'b0,   {(signed_first_operator <       signed_second_operator)}};
-                ALU_LUI     :   result  = {i_second_operator[(NB_DATA/2)-1 -: NB_DATA/2], NB_DATA/2{1'b0}};
+                ALU_LUI     :   result  = {i_second_operator[(NB_DATA/2)-1 -: NB_DATA/2], {NB_DATA/2{1'b0}}};
                 
-                default     :   result  = {NB_DATA_BUS{1'b0}};
+                default     :   result  = {NB_DATA{1'b0}};
             
             endcase
     end

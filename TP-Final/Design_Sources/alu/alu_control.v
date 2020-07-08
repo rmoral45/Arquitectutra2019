@@ -1,6 +1,6 @@
 `timescale 1ns/100ps
 
-module alu_ctrl
+module alu_control
 #(
     parameter                                           NB_DATA                 = 32,
     parameter                                           NB_ADDR                 = $clog2(NB_DATA), 
@@ -63,23 +63,22 @@ module alu_ctrl
     always @ *
     begin
         case(i_operation)
-        begin
-            2'b00:  RTYPE_INMEDIATE_INSTRUCTION_CASE
+            2'b00: //RTYPE_INMEDIATE_INSTRUCTION_CASE
             begin
                 alu_opcode = i_ctrl_opcode [NB_ALU_OPCODE-1 -: NB_ALU_OPCODE];
             end
 
-            2'b01:  LOAD_STORE_INSTRUCTION_CASE
+            2'b01: // LOAD_STORE_INSTRUCTION_CASE
             begin
                 alu_opcode = ALU_ADD;
             end
             
-            2'b10:  BRANCH_INSTRUCTION_CASE
+            2'b10: // BRANCH_INSTRUCTION_CASE
             begin
                 alu_opcode = ALU_SUB;
             end
 
-            default:
+            default: //DEFAULT_CASE
             begin
                 alu_opcode = i_ctrl_opcode [NB_ALU_OPCODE-1 -: NB_ALU_OPCODE];
             end

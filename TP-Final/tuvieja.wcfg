@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_mips_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_mips" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="36450001fs"></ZoomEndTime>
+      <Cursor1Time time="15550000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="202"></NameColumnWidth>
+      <ValueColumnWidth column_width="68"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="27" />
+   <wvobject type="logic" fp_name="/tb_mips/tb_clock">
+      <obj_property name="ElementShortName">tb_clock</obj_property>
+      <obj_property name="ObjectShortName">tb_clock</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/tb_reset">
+      <obj_property name="ElementShortName">tb_reset</obj_property>
+      <obj_property name="ObjectShortName">tb_reset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/i_clock">
+      <obj_property name="ElementShortName">i_clock</obj_property>
+      <obj_property name="ObjectShortName">i_clock</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/i_reset">
+      <obj_property name="ElementShortName">i_reset</obj_property>
+      <obj_property name="ObjectShortName">i_reset</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/pc">
+      <obj_property name="ElementShortName">pc[4:0]</obj_property>
+      <obj_property name="ObjectShortName">pc[4:0]</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/pc_inc">
+      <obj_property name="ElementShortName">pc_inc[4:0]</obj_property>
+      <obj_property name="ObjectShortName">pc_inc[4:0]</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/pc_next">
+      <obj_property name="ElementShortName">pc_next[4:0]</obj_property>
+      <obj_property name="ObjectShortName">pc_next[4:0]</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/instruction_fetched">
+      <obj_property name="ElementShortName">instruction_fetched[31:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction_fetched[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_fetch_unit/o_pc_ltchd">
+      <obj_property name="ElementShortName">o_pc_ltchd[4:0]</obj_property>
+      <obj_property name="ObjectShortName">o_pc_ltchd[4:0]</obj_property>
+      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_control_unit/i_instruction_type">
+      <obj_property name="ElementShortName">i_instruction_type[5:0]</obj_property>
+      <obj_property name="ObjectShortName">i_instruction_type[5:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_control_unit/o_rf_wr_addr_src">
+      <obj_property name="ElementShortName">o_rf_wr_addr_src</obj_property>
+      <obj_property name="ObjectShortName">o_rf_wr_addr_src</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_rf_regdst_ltchd">
+      <obj_property name="ElementShortName">o_rf_regdst_ltchd</obj_property>
+      <obj_property name="ObjectShortName">o_rf_regdst_ltchd</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_control_unit/o_rf_wr_data_src">
+      <obj_property name="ElementShortName">o_rf_wr_data_src</obj_property>
+      <obj_property name="ObjectShortName">o_rf_wr_data_src</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_rf_wr_data_src">
+      <obj_property name="ElementShortName">o_rf_wr_data_src</obj_property>
+      <obj_property name="ObjectShortName">o_rf_wr_data_src</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_control_unit/o_rf_wr_enb">
+      <obj_property name="ElementShortName">o_rf_wr_enb</obj_property>
+      <obj_property name="ObjectShortName">o_rf_wr_enb</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_rf_wr_enb_ltchd">
+      <obj_property name="ElementShortName">o_rf_wr_enb_ltchd</obj_property>
+      <obj_property name="ObjectShortName">o_rf_wr_enb_ltchd</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_control_unit/o_alu_data_src">
+      <obj_property name="ElementShortName">o_alu_data_src</obj_property>
+      <obj_property name="ObjectShortName">o_alu_data_src</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_alu_data_src_ltchd">
+      <obj_property name="ElementShortName">o_alu_data_src_ltchd</obj_property>
+      <obj_property name="ObjectShortName">o_alu_data_src_ltchd</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_control_unit/o_alu_operation">
+      <obj_property name="ElementShortName">o_alu_operation[1:0]</obj_property>
+      <obj_property name="ObjectShortName">o_alu_operation[1:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_alu_op_type_ltchd">
+      <obj_property name="ElementShortName">o_alu_op_type_ltchd[1:0]</obj_property>
+      <obj_property name="ObjectShortName">o_alu_op_type_ltchd[1:0]</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_control_unit/o_inmediate_operation">
+      <obj_property name="ElementShortName">o_inmediate_operation</obj_property>
+      <obj_property name="ObjectShortName">o_inmediate_operation</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_mips/u_mips/u_instruction_decode_unit/o_alu_inmediate_operation_ltchd">
+      <obj_property name="ElementShortName">o_alu_inmediate_operation_ltchd</obj_property>
+      <obj_property name="ObjectShortName">o_alu_inmediate_operation_ltchd</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_execution_unit/u_alu/i_opcode">
+      <obj_property name="ElementShortName">i_opcode[3:0]</obj_property>
+      <obj_property name="ObjectShortName">i_opcode[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_execution_unit/u_alu/i_first_operator">
+      <obj_property name="ElementShortName">i_first_operator[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i_first_operator[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_execution_unit/u_alu/i_second_operator">
+      <obj_property name="ElementShortName">i_second_operator[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i_second_operator[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_execution_unit/u_alu/result">
+      <obj_property name="ElementShortName">result[31:0]</obj_property>
+      <obj_property name="ObjectShortName">result[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_mips/u_mips/u_execution_unit/u_alu/o_result">
+      <obj_property name="ElementShortName">o_result[31:0]</obj_property>
+      <obj_property name="ObjectShortName">o_result[31:0]</obj_property>
+   </wvobject>
+</wave_config>

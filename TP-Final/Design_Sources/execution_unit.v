@@ -64,6 +64,7 @@ module execution_unit
     reg                                     data_mem_wr_enb_ltchd;
     reg                                     data_mem_rd_enb_ltchd;
     reg                                     is_branch_instruction_ltchd;
+    wire        [NB_ALU_OPCODE-1    : 0]    alu_opcode;
     wire        [NB_DATA-1          : 0]    alu_result;
     reg         [NB_DATA-1          : 0]    alu_result_ltchd;
     wire                                    alu_zero;
