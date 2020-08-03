@@ -5,14 +5,15 @@ import instruction_dictionary as inst_dict
 
 NB_ADDR = 5
 NB_IMM_OFF = 16
-HALT = '0000000000000000'        
+HALT = '0000000000000000'  
+NB_INSTR_INDEX = 26
 
 def main():
 
     test_case = raw_input('Ingrese test_case a compilar: ')
 
     testcase_asmfile = '../test/asm/' + test_case + '.asm'
-    testcase_coefile = '../test/coe/' + test_case + '.coe'
+    testcase_coefile = '../test/coe/' + test_case + '.txt'
 
     program_coe = open(testcase_coefile, 'w')
     program_asm = open(testcase_asmfile, 'r')
@@ -34,12 +35,23 @@ def main():
                 bin_arg[index] = bin(int(arg))[2:].zfill(NB_ADDR)
                 #print(bin(int(arg))[2:].zfill(NB_ADDR))
             elif(code == 'itype'):
-                if(index == 0 or index == 2):
+                if(index == 0 or index == 1):
                     bin_arg[index] = bin(int(arg))[2:].zfill(NB_ADDR)
                     #print(bin(int(arg))[2:].zfill(NB_ADDR))
                 else:
                     bin_arg[index] = bin(int(arg))[2:].zfill(NB_IMM_OFF)
                     #print(bin(int(arg))[2:].zfill(NB_IMM_OFF))
+            elif(code == 'itype2'):
+                if(index == 0 or index == 2):
+                    bin_arg[index] = bin(int(arg))[2:].zfill(NB_ADDR)
+                else:
+                    bin_arg[index] = bin(int(arg))[2:].zfill(NB_IMM_OFF)
+            elif(code == 'jtype1'):
+                bin_arg[index] = bin(int(arg))[2:].zfill(NB_INSTR_INDEX)
+            elif(code == 'jtype2'):
+                bin_arg[index] = bin(int(arg))[2:].zfill(NB_ADDR)
+            elif(code == 'jtype3'):
+                bin_arg[index] = bin(int(arg))[2:].zfill(NB_ADDR)
             elif(code == 'lui'):
                 if(index == 0):
                     bin_arg[0] = bin(int(arg))[2:].zfill(NB_ADDR)
@@ -54,6 +66,9 @@ def main():
 
 
     program_coe.write(str(0).zfill(32))
+
+    program_asm.close()
+    program_coe.close()
             
     return 
 

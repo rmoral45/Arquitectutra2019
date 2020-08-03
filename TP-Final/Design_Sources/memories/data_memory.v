@@ -3,7 +3,7 @@ module data_memory
 #(
     parameter                           NB_ADDR     = 32,
     parameter                           NB_DATA     = 32,
-    parameter                           RAM_DEPTH   = 2**NB_ADDR
+    parameter                           RAM_DEPTH   = 32
 )
 (
     //Outputs

@@ -72,19 +72,19 @@ def sw(arg_list): #alu_ctrl_opcode: store - alu_opcode: add
  
 # immediate instructions will be decoded by the compiller as follows: rt,rs,immediate --> rt: arg_0, rs: arg_1, immediate: arg_2
 def addi(arg_list): #alu_ctrl_opcode: add   
-    return '111000'+arg_list[2]+arg_list[0]+arg_list[1]    
+    return '111000'+arg_list[1]+arg_list[0]+arg_list[2]    
 
 def andi(arg_list): #alu_ctrl_opcode: and   
-    return '111100'+arg_list[2]+arg_list[0]+arg_list[1]     
+    return '111100'+arg_list[1]+arg_list[0]+arg_list[2]     
 
 def ori(arg_list): #alu_ctrl_opcode: or   
-    return '111101'+arg_list[2]+arg_list[0]+arg_list[1]         
+    return '111101'+arg_list[1]+arg_list[0]+arg_list[2]         
 
 def xori(arg_list): #alu_ctrl_opcode: xor   
-    return '111110'+arg_list[2]+arg_list[0]+arg_list[1]         
+    return '111110'+arg_list[1]+arg_list[0]+arg_list[2]         
 
 def slti(arg_list): #alu_ctrl_opcode: slt 
-    return '111001'+arg_list[2]+arg_list[0]+arg_list[1]     
+    return '111001'+arg_list[1]+arg_list[0]+arg_list[2]     
 
 #lui: rt,immediate --> rt: arg_0, immediate: arg_1
 def lui(arg_list): #alu_ctrl_opcode: his own  
@@ -97,7 +97,25 @@ def beq(arg_list): #alu_ctrl_opcode: his own - alu_opcode: sub
 def bne(arg_list): #alu_ctrl_opcode: his own - alu_opcode: sub
     return '101101'+arg_list[0]+arg_list[1]+arg_list[2]
 
-#falta implementar: jr, jalr, j, jal
+# j and jal: format: instr_opcode + instr_index --> arg_0: target
+def j(arg_list):
+    return '110010'+arg_list[0]
+
+def jal(arg_list):
+    return '011001'+arg_list[0]
+
+#jr format: instr_opcode + instr_jr --> arg_0: target register
+def jr(arg_list): 
+    return '011011'+arg_list[0]+'000000000000000'+'000000'
+
+def jalr(arg_list):
+    if(len(arg_list) > 1):
+        return '011001'+arg_list[1]+'00000'+arg_list[0]+'0000000000'
+    else:
+        return '011001'+arg_list[1]+'00000'+'11111'+'0000000000'
+    
+
+#jr, jalr
 
 instructions = {
         'SLL': (sll, 'rtype'),
@@ -113,17 +131,15 @@ instructions = {
         'XOR': (xor, 'rtype'),
         'NOR': (nor, 'rtype'),
         'SLT': (slt, 'rtype'),
-        #'JR': jr, 
-        #'JALR': jalr,
-        'LB': (lb, 'itype'),
-        'LH': (lh, 'itype'),
-        'LW': (lw, 'itype'), 
-        'LWU': (lwu, 'itype'),
-        'LBU': (lbu, 'itype'),
-        'LHU': (lhu, 'itype'),
-        'SB': (sb, 'itype'),
-        'SH': (sh, 'itype'),
-        'SW': (sw, 'itype'),
+        'LB': (lb, 'itype2'),
+        'LH': (lh, 'itype2'),
+        'LW': (lw, 'itype2'), 
+        'LWU': (lwu, 'itype2'),
+        'LBU': (lbu, 'itype2'),
+        'LHU': (lhu, 'itype2'),
+        'SB': (sb, 'itype2'),
+        'SH': (sh, 'itype2'),
+        'SW': (sw, 'itype2'),
         'ADDI': (addi, 'itype'),
         'ANDI': (andi, 'itype'), 
         'ORI': (ori, 'itype'),
@@ -131,7 +147,9 @@ instructions = {
         'LUI': (lui, 'lui'), 
         'SLTI': (slti, 'itype'),
         'BEQ': (beq, 'itype'),
-        'BNE': (bne, 'itype')
-        #'J': j,
-        #'JAL': jal
+        'BNE': (bne, 'itype'),
+        'J': (j, 'jtype1'),
+        'JAL': (jal, 'jtype1'),
+        'JR':(jr, 'jtype2'),
+        'JALR':(jalr, 'jtype3')
 }

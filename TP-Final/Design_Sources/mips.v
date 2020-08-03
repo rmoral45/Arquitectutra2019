@@ -6,71 +6,40 @@ module mips
     parameter                                   NB_DATA                 =   2**NB_ADDR,
     parameter                                   NB_OPCODE               =   6,
     parameter                                   NB_ALU_OP_SEL           =   2,
+    parameter                                   NB_LOAD_STORE_SEL       =   2,
     parameter                                   FILE                    =   ""
 )
 (
     //Outputs
     //Instruction Fetch Pipeline Outputs
-    output wire [NB_DATA-1              : 0]    o_pipeline_ifu_instruction,
-    output wire [NB_DATA-1              : 0]    o_pipeline_ifu_pcstage0,
-    //Instruction Decoder Pipeline Outputs
-    output wire [NB_DATA-1              : 0]    o_pipeline_idu_rs_data,
-    output wire [NB_DATA-1              : 0]    o_pipeline_idu_rt_data,
-    output wire [NB_OPCODE-1            : 0]    o_pipeline_idu_alu_ctrl_opcode,
-    output wire [NB_ALU_OP_SEL-1        : 0]    o_pipeline_idu_alu_op_type,
-    output wire                                 o_pipeline_idu_alu_sign_ope,
-    output wire                                 o_pipeline_idu_alu_inm_ope,
-    output wire [NB_ADDR-1              : 0]    o_pipeline_idu_sa_operator,
-    output wire [NB_DATA-1              : 0]    o_pipeline_idu_inmediate_operator,
-    output wire [NB_ADDR-1              : 0]    o_pipeline_idu_pc_stage_1,
-    output wire [NB_ADDR-1              : 0]    o_pipeline_idu_rf_rt_addr,
-    output wire [NB_ADDR-1              : 0]    o_pipeline_idu_rf_rd_addr,
-    output wire                                 o_pipeline_idu_rf_regdst,
-    output wire                                 o_pipeline_idu_data_mem_wr_enb,
-    output wire                                 o_pipeline_idu_data_mem_rd_enb,
-    output wire                                 o_pipeline_idu_is_branc_instruction,
-    output wire                                 o_pipeline_idu_rf_wr_enb,
-    output wire                                 o_pipeline_idu_rf_wr_data_src,
-    //Execution unit Pipeline Outputs
-    output wire                                 o_pipeline_exu_data_mem_wr_enb,
-    output wire                                 o_pipeline_exu_data_mem_rd_enb,
-    output wire                                 o_pipeline_exu_is_branch_instruction,
-    output wire [NB_DATA-1              : 0]    o_pipeline_exu_alu_result,
-    output wire                                 o_pipeline_exu_alu_zero,
-    output wire [NB_DATA-1              : 0]    o_pipeline_exu_branch_target_addr,
-    output wire [NB_DATA-1              : 0]    o_pipeline_exu_rf_rt_data,
-    output wire                                 o_pipeline_exu_rf_wr_enb,
-    output wire                                 o_pipeline_exu_rf_wr_data_src,
-    output wire                                 o_pipeline_exu_rf_wr_addr,
-    //Memory acces unit Pipeline Outputs
-    output wire [NB_DATA-1              : 0]    o_pipeline_mau_data_readed,
-    output wire [NB_DATA-1              : 0]    o_pipeline_mau_alu_result,
-    output wire                                 o_pipeline_mau_rf_wr_enb,
-    output wire                                 o_pipeline_mau_rf_wr_data_src,
-    output wire [NB_ADDR-1              : 0]    o_pipeline_mau_wr_addr,
-    output wire                                 o_pipeline_mau_pc_source,
-    //Wr Back data mux output
-    output wire [NB_DATA-1              : 0]    o_pipeline_wr_data_back,
+
 
     //Inputs
     input wire                                  i_enable,
+    
+    //Prog mem writing
+    input wire                                  i_prog_mem_wr_enb,
+    input wire  [NB_ADDR-1              : 0]    i_prog_mem_wr_addr,
+    input wire  [NB_DATA-1              : 0]    i_data,
 
     //Reset & clocking
     input wire                                  i_clock,
     input wire                                  i_reset                              
 );
 
-    //Pipeline
-    //wire        [NB_DATA-1              : 0]    pipeline_exu_alu_result;
-    //wire        [NB_DATA-1              : 0]    pipeline_exu_branch_target_addr;
+    //Prog mem writing
+    /*wire        [NB_DATA-1              : 0]    instruction_readed;
+    wire                                        prog_mem_wr_enb;
+    wire        [NB_ADDR-1              : 0]    prog_mem_wr_addr;*/
 
+    //Pipeline
     wire        [NB_DATA-1              : 0]    pipeline_wr_back;
     wire        [NB_DATA-1              : 0]    pipeline_data_mem;
     wire        [NB_DATA-1              : 0]    pipeline_alu_wb;    
     
     //Instruction fetch unit (ifu) signals
     wire        [NB_DATA-1              : 0]    pipeline_ifu_instruction;
-    wire        [NB_ADDR-1              : 0]    pipeline_ifu_pc_stage_0;
+    wire        [NB_DATA-1              : 0]    pipeline_ifu_pc_stage_0;
 
     //Instruction decoder unit (idu) signals
     wire        [NB_DATA-1              : 0]    pipeline_idu_rs_data;
@@ -82,15 +51,20 @@ module mips
     wire                                        pipeline_idu_alu_inm_ope;
     wire        [NB_ADDR-1              : 0]    pipeline_idu_sa_operator;
     wire        [NB_DATA-1              : 0]    pipeline_idu_inmediate_operator;
-    wire        [NB_ADDR-1              : 0]    pipeline_idu_pc_stage_1;
+    wire        [NB_DATA-1              : 0]    pipeline_idu_pc_stage_1;
     wire        [NB_ADDR-1              : 0]    pipeline_idu_rf_rt_addr;
     wire        [NB_ADDR-1              : 0]    pipeline_idu_rf_rd_addr;
+    wire        [NB_ADDR-1              : 0]    pipeline_idu_rf_rs_addr;
     wire                                        pipeline_idu_rf_regdst;
     wire                                        pipeline_idu_data_mem_wr_enb;
     wire                                        pipeline_idu_data_mem_rd_enb;
     wire                                        pipeline_idu_is_branc_instruction;
+    wire                                        pipeline_idu_is_jump_instruction;
+    wire        [NB_DATA-1              : 0]    pipeline_idu_jump_addr;
     wire                                        pipeline_idu_rf_wr_enb;
     wire                                        pipeline_idu_rf_wr_data_src;
+    wire        [NB_LOAD_STORE_SEL-1    : 0]    pipeline_idu_load_store_selector;
+    wire                                        idu_stall_condition;
 
     //Control unit output signals
     wire        [NB_OPCODE-1            : 0]    instruction_type;
@@ -99,16 +73,20 @@ module mips
     wire                                        rf_wr_addr_src;         //signal to indicate store addr (rt/rd)
     wire                                        rf_wr_enable;
     wire                                        is_branch;
+    wire                                        is_jump;
     wire                                        data_mem_rd_enb;
     wire                                        data_mem_wr_enb;
     wire                                        alu_data_src;
     wire        [NB_ALU_OP_SEL-1        : 0]    alu_operation_type;
     wire                                        alu_signed_operation;
     wire                                        inmediate_operation;   
+    wire        [NB_LOAD_STORE_SEL-1    : 0]    load_store_selector;
     //Execution unit (exu) signals
     wire                                        pipeline_exu_data_mem_wr_enb;
     wire                                        pipeline_exu_data_mem_rd_enb;
     wire                                        pipeline_exu_is_branch_instruction;
+    wire                                        pipeline_exu_is_jump_instruction;
+    wire        [NB_DATA-1              : 0]    pipeline_exu_jump_addr;
     wire        [NB_DATA-1              : 0]    pipeline_exu_alu_result;
     wire                                        pipeline_exu_alu_zero;
     wire        [NB_DATA-1              : 0]    pipeline_exu_branch_target_addr;
@@ -116,6 +94,7 @@ module mips
     wire                                        pipeline_exu_rf_wr_enb;
     wire                                        pipeline_exu_rf_wr_data_src;
     wire        [NB_ADDR-1              : 0]    pipeline_exu_rf_wr_addr;
+    wire        [NB_LOAD_STORE_SEL-1    : 0]    pipeline_exu_load_store_selector;
     //Memory acces unit (mau) signals
     wire        [NB_DATA-1              : 0]    pipeline_mau_data_readed;
     wire        [NB_DATA-1              : 0]    pipeline_mau_alu_result;
@@ -123,6 +102,7 @@ module mips
     wire                                        pipeline_mau_rf_wr_data_src;
     wire        [NB_ADDR-1              : 0]    pipeline_mau_wr_addr; 
     wire                                        pipeline_mau_pc_source;
+    wire        [NB_DATA-1              : 0]    pipeline_mau_branch_addr;
     //WR BACK signals
     wire        [NB_DATA-1              : 0]    pipeline_wr_data_back;
 
@@ -137,8 +117,14 @@ module mips
         .o_inst_fetched                         (pipeline_ifu_instruction),
         .o_pc_ltchd                             (pipeline_ifu_pc_stage_0),
         
+        .i_enable                               (i_enable),
         .i_pc_source                            (pipeline_mau_pc_source),
-        .i_branch_addr                          (pipeline_exu_branch_target_addr),   
+        .i_branch_addr                          (pipeline_mau_branch_addr),   
+        .i_stall                                (idu_stall_condition),
+
+        .i_data                                 (i_data),
+        .i_wr_enb                               (i_prog_mem_wr_enb),
+        .i_wr_addr                              (i_prog_mem_wr_addr),
 
         .i_clock                                (i_clock),
         .i_reset                                (i_reset)
@@ -151,14 +137,16 @@ module mips
         .o_rf_wr_addr_src                       (rf_wr_addr_src),//regdst
         .o_rf_wr_enb                            (rf_wr_enable),
         .o_branch                               (is_branch),
+        .o_jump                                 (is_jump),
         .o_data_mem_rd_enb                      (data_mem_rd_enb),
         .o_data_mem_wr_enb                      (data_mem_wr_enb),
         .o_alu_data_src                         (alu_data_src),
         .o_alu_operation                        (alu_operation_type),
         .o_signed_operation                     (alu_signed_operation),
         .o_inmediate_operation                  (inmediate_operation),
+        .o_load_store_sel                       (load_store_selector),
 
-        .i_instruction_type                     (instruction_type)
+        .i_instruction_opcode                   (instruction_type)
     );
 
     instruction_decode_unit
@@ -178,39 +166,48 @@ module mips
         .o_pc_ltchd                             (pipeline_idu_pc_stage_1),
         .o_rf_rt_addr_ltchd                     (pipeline_idu_rf_rt_addr),
         .o_rf_rd_addr_ltchd                     (pipeline_idu_rf_rd_addr),
+        .o_rf_rs_addr_ltchd                     (pipeline_idu_rf_rs_addr),
         .o_rf_regdst_ltchd                      (pipeline_idu_rf_regdst),
+        .o_load_store_selector_ltchd            (pipeline_idu_load_store_selector),
         //to mem_stage
         .o_data_mem_wr_enb_ltchd                (pipeline_idu_data_mem_wr_enb),
         .o_data_mem_rd_enb_ltchd                (pipeline_idu_data_mem_rd_enb),
         .o_is_branch_instruction_ltchd          (pipeline_idu_is_branc_instruction),  
+        .o_is_jump_instruction_ltchd            (pipeline_idu_is_jump_instruction),
+        .o_jump_addr_ltchd                      (pipeline_idu_jump_addr),
         //to wr_back_stage
         .o_rf_wr_enb_ltchd                      (pipeline_idu_rf_wr_enb),
         .o_rf_wr_data_src                       (pipeline_idu_rf_wr_data_src),
+        //HDU
+        .o_stall                                (idu_stall_condition),
  
+        .i_enable                               (i_enable),
         .i_wr_enable                            (pipeline_mau_rf_wr_enb),
         .i_rf_wr_addr                           (pipeline_mau_wr_addr),
         .i_rf_data                              (pipeline_wr_data_back),
         .i_pipeline_ifu_instruction             (pipeline_ifu_instruction),
-        .i_inmediate_operation                  (inmediate_operation),
-
+        .i_flush                                (pipeline_mau_pc_source),
+        
         //inputs ctrl signals to latch
         //to ex_stage
         .i_alu_data_src                         (alu_data_src),
         .i_alu_op_type                          (alu_operation_type),
         .i_alu_signed_operation_ltchd           (alu_signed_operation),
-        .i_alu_inmediate_operation_ltchd        (inmediate_operation),
+        .i_inmediate_operation                  (inmediate_operation),
         .i_pc_stage_0                           (pipeline_ifu_pc_stage_0),
         .i_rf_regdst                            (rf_wr_addr_src),
+        .i_load_store_selector                  (load_store_selector),
         //to_mem_stage
         .i_data_mem_wr_enb                      (data_mem_wr_enb),
         .i_data_mem_rd_enb                      (data_mem_rd_enb),
         .i_is_branch_instruction                (is_branch),
+        .i_is_jump_instruction                  (is_jump),
         //to wr_back_stage
         .i_rf_wr_enb                            (rf_wr_enable),
         .i_rf_wr_data_src                       (rf_wr_data_src),
         
-
-        .i_clock                                (i_clock)
+        .i_clock                                (i_clock),
+        .i_reset                                (i_reset)
     );
 
     execution_unit
@@ -221,15 +218,20 @@ module mips
         .o_data_mem_wr_enb_ltchd                (pipeline_exu_data_mem_wr_enb),
         .o_data_mem_rd_enb_ltchd                (pipeline_exu_data_mem_rd_enb),
         .o_is_branch_instruction_ltchd          (pipeline_exu_is_branch_instruction),
+        .o_is_jump_instruction_ltchd            (pipeline_exu_is_jump_instruction),
+        .o_jump_addr_ltchd                      (pipeline_exu_jump_addr),
         .o_alu_result_ltchd                     (pipeline_exu_alu_result),
         .o_alu_zero_ltchd                       (pipeline_exu_alu_zero),
         .o_branch_addr_ltchd                    (pipeline_exu_branch_target_addr),
         .o_rf_rt_data_ltchd                     (pipeline_exu_rf_rt_data),
+        .o_load_store_selector_ltchd            (pipeline_exu_load_store_selector),           
         //to wr_back_stage
         .o_rf_wr_enb_ltchd                      (pipeline_exu_rf_wr_enb),
         .o_rf_wr_data_src_ltchd                 (pipeline_exu_rf_wr_data_src),
         .o_rf_wr_addr_ltchd                     (pipeline_exu_rf_wr_addr),
 
+
+        .i_enable                               (i_enable),
         .i_rf_rs                                (pipeline_idu_rs_data),
         .i_rf_rt                                (pipeline_idu_rt_data),
         .i_alu_ctrl_opcode                      (pipeline_idu_alu_ctrl_opcode),
@@ -242,18 +244,28 @@ module mips
         .i_pc_stage_1                           (pipeline_idu_pc_stage_1),
         .i_rf_rt_addr                           (pipeline_idu_rf_rt_addr),
         .i_rf_rd_addr                           (pipeline_idu_rf_rd_addr),
+        .i_rf_rs_addr                           (pipeline_idu_rf_rs_addr),
         .i_rf_regdst                            (pipeline_idu_rf_regdst),
+        .i_load_store_selector                  (pipeline_idu_load_store_selector),
+        .i_flush                                (pipeline_mau_pc_source),
 
         //inputs ctrl signals to latch
         //to mem_stage
         .i_data_mem_wr_enb                      (pipeline_idu_data_mem_wr_enb),
         .i_data_mem_rd_enb                      (pipeline_idu_data_mem_rd_enb),
         .i_is_branch_instruction                (pipeline_idu_is_branc_instruction),
+        .i_is_jump_instruction                  (pipeline_idu_is_jump_instruction),
+        .i_jump_addr                            (pipeline_idu_jump_addr),
         //to wr_back_stage 
         .i_rf_wr_enb                            (pipeline_idu_rf_wr_enb),
         .i_rf_wr_data_src                       (pipeline_idu_rf_wr_data_src),
+        //to forwarding unit
+        .i_rf_rd_addr_from_mem                  (pipeline_mau_wr_addr),
+        .i_rf_wr_enb_from_mem                   (pipeline_mau_rf_wr_enb),
+        .i_alu_operator_replacement             (pipeline_wr_data_back),
 
-        .i_clock                                (i_clock)
+        .i_clock                                (i_clock),
+        .i_reset                                (i_reset)
     );
 
     memory_access_unit
@@ -266,14 +278,19 @@ module mips
         .o_rf_wr_data_src_ltchd                 (pipeline_mau_rf_wr_data_src),
         .o_rf_wr_addr_ltchd                     (pipeline_mau_wr_addr),
         .o_pc_source                            (pipeline_mau_pc_source),
+        .o_branch_addr_ltchd                    (pipeline_mau_branch_addr),
         
+        .i_enable                               (i_enable),
         .i_addr                                 (pipeline_exu_alu_result),
         .i_rf_data                              (pipeline_exu_rf_rt_data),
         .i_wr_enable                            (pipeline_exu_data_mem_wr_enb),
         .i_rd_enable                            (pipeline_exu_data_mem_rd_enb),
         .i_is_branch_instruction                (pipeline_exu_is_branch_instruction),
+        .i_is_jump_instruction                  (pipeline_exu_is_jump_instruction),
+        .i_jump_addr                            (pipeline_exu_jump_addr),
         .i_alu_zero                             (pipeline_exu_alu_zero),
         .i_calculated_branch_addr               (pipeline_exu_branch_target_addr),
+        .i_load_store_selector                  (pipeline_exu_load_store_selector),
         //inputs ctrl signals to latch
         //to wr_back_stage
         .i_rf_wr_enb                            (pipeline_exu_rf_wr_enb),
@@ -285,46 +302,8 @@ module mips
 
 /* WR BACK STAGE */
 
-assign                                          pipeline_wr_data_back       = (pipeline_exu_rf_wr_data_src) ?   pipeline_mau_data_readed : pipeline_mau_alu_result;
+assign                                          pipeline_wr_data_back       = (pipeline_mau_rf_wr_data_src) ?   pipeline_mau_data_readed : pipeline_mau_alu_result;
 
-//Outputs
-assign  o_pipeline_ifu_instruction                                          = pipeline_ifu_instruction;
-assign  o_pipeline_ifu_pc_stage_0                                           = pipeline_ifu_pc_stage_0;
-assign  o_pipeline_idu_rs_data                                              = pipeline_idu_rs_data;
-assign  o_pipeline_idu_rt_data                                              = pipeline_idu_rt_data;
-assign  o_pipeline_idu_alu_ctrl_opcode                                      = pipeline_idu_alu_ctrl_opcode;
-assign  o_pipeline_idu_alu_data_src                                         = pipeline_idu_alu_data_src;
-assign  o_pipeline_idu_alu_op_type                                          = pipeline_idu_alu_op_type;
-assign  o_pipeline_idu_alu_sign_ope                                         = pipeline_idu_alu_sign_ope;
-assign  o_pipeline_idu_alu_inm_ope                                          = pipeline_idu_alu_inm_ope;
-assign  o_pipeline_idu_sa_operator                                          = pipeline_idu_sa_operator;
-assign  o_pipeline_idu_inmediate_operator                                   = pipeline_idu_inmediate_operator;
-assign  o_pipeline_idu_pc_stage_1                                           = pipeline_idu_pc_stage_1;
-assign  o_pipeline_idu_rf_rt_addr                                           = pipeline_idu_rf_rt_addr;
-assign  o_pipeline_idu_rf_rd_addr                                           = pipeline_idu_rf_rd_addr;
-assign  o_pipeline_idu_rf_regdst                                            = pipeline_idu_rf_regdst;
-assign  o_pipeline_idu_data_mem_wr_enb                                      = pipeline_idu_data_mem_wr_enb;
-assign  o_pipeline_idu_data_mem_rd_enb                                      = pipeline_idu_data_mem_rd_enb;
-assign  o_pipeline_idu_is_branc_instruction                                 = pipeline_idu_is_branc_instruction;
-assign  o_pipeline_idu_rf_wr_enb                                            = pipeline_idu_rf_wr_enb;
-assign  o_pipeline_idu_rf_wr_data_src                                       = pipeline_idu_rf_wr_data_src;
-assign  o_pipeline_exu_data_mem_wr_enb                                      = pipeline_exu_data_mem_wr_enb;
-assign  o_pipeline_exu_data_mem_rd_enb                                      = pipeline_exu_data_mem_rd_enb;
-assign  o_pipeline_exu_is_branch_instruction                                = pipeline_exu_is_branch_instruction;
-assign  o_pipeline_exu_alu_result                                           = pipeline_exu_alu_result;
-assign  o_pipeline_exu_alu_zero                                             = pipeline_exu_alu_zero;
-assign  o_pipeline_exu_branch_target_addr                                   = pipeline_exu_branch_target_addr;
-assign  o_pipeline_exu_rf_rt_data                                           = pipeline_exu_rf_rt_data;
-assign  o_pipeline_exu_rf_wr_enb                                            = pipeline_exu_rf_wr_enb;
-assign  o_pipeline_exu_rf_wr_data_src                                       = pipeline_exu_rf_wr_data_src;
-assign  o_pipeline_exu_rf_wr_addr                                           = pipeline_exu_rf_wr_addr;
-assign  o_pipeline_mau_data_readed                                          = pipeline_mau_data_readed;
-assign  o_pipeline_mau_alu_result                                           = pipeline_mau_alu_result;
-assign  o_pipeline_mau_rf_wr_enb                                            = pipeline_mau_rf_wr_enb;
-assign  o_pipeline_mau_rf_wr_data_src                                       = pipeline_mau_rf_wr_data_src;
-assign  o_pipeline_mau_wr_addr                                              = pipeline_mau_wr_addr; 
-assign  o_pipeline_mau_pc_source                                            = pipeline_mau_pc_source;
-assign  o_pipeline_wr_data_back                                             = pipeline_wr_data_back;
 
 endmodule
     

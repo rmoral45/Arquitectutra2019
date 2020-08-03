@@ -19,9 +19,18 @@ module register_file
 
     //Clocking
     input   wire                    i_clock
+
 );
     /*                              Internal Signals                                */
     reg             [NB_DATA-1 : 0] register_file [RAM_DEPTH-1 : 0];
+
+    //RF initialization
+    integer i;
+    generate
+        initial
+            for(i = 0; i < RAM_DEPTH; i = i + 1)
+                register_file[i] <= {NB_DATA{1'b0+i}};
+    endgenerate
 
     /*                              Alu algorithm begins                            */  
     always @(posedge i_clock)
